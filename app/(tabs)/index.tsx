@@ -1,98 +1,199 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
-
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
-
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+interface Transaction {
+  id: string;
+  title: string;
+  category: string;
+  amount: number;
 }
 
+const HomeScreen = () => {
+  const transactions: Transaction[] = [
+    { id: '1', title: 'FreeLancer', category: 'Ganhos', amount: 100 },
+    { id: '2', title: 'Padaria', category: 'Gastos', amount: -30 },
+    { id: '3', title: 'Fiis', category: 'Investimentos', amount: -130 },
+  ];
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
+      <ScrollView style={styles.scrollView}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Meu App Finanças</Text>
+        </View>
+
+        {/* Cards Grid */}
+        <View style={styles.cardsContainer}>
+          <View style={styles.cardRow}>
+            <View style={[styles.card, styles.cardBlue]}>
+              <Text style={styles.cardLabel}>Saldo Total</Text>
+              <Text style={styles.cardValue}>R$ 935,00</Text>
+            </View>
+            <View style={[styles.card, styles.cardGreen]}>
+              <Text style={styles.cardLabel}>Ganhos</Text>
+              <Text style={styles.cardValue}>R$ 3000,00</Text>
+            </View>
+          </View>
+          <View style={styles.cardRow}>
+            <View style={[styles.card, styles.cardRed]}>
+              <Text style={styles.cardLabel}>Gastos</Text>
+              <Text style={styles.cardValue}>R$ 2065,00</Text>
+            </View>
+            <View style={[styles.card, styles.cardYellow]}>
+              <Text style={styles.cardLabel}>Investimentos</Text>
+              <Text style={styles.cardValue}>R$ 300,00</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Transações Recentes */}
+        <View style={styles.transactionsContainer}>
+          <Text style={styles.sectionTitle}>Transações Recentes</Text>
+          <View style={styles.transactionsList}>
+            {transactions.map((transaction) => (
+              <View key={transaction.id} style={styles.transactionItem}>
+                <View style={styles.transactionInfo}>
+                  <Text style={styles.transactionTitle}>
+                    {transaction.title}
+                  </Text>
+                  <Text style={styles.transactionCategory}>
+                    {transaction.category}
+                  </Text>
+                </View>
+                <Text
+                  style={[
+                    styles.transactionAmount,
+                    transaction.amount > 0 && styles.positiveAmount,
+                  ]}>
+                  R$ {Math.abs(transaction.amount)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
   },
-  stepContainer: {
-    gap: 8,
+  scrollView: {
+    flex: 1,
+  },
+  header: {
+    backgroundColor: '#1a1a2e',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  cardsContainer: {
+    padding: 16,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  card: {
+    flex: 1,
+    borderRadius: 12,
+    padding: 20,
+    marginHorizontal: 6,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  cardBlue: {
+    backgroundColor: '#4A90E2',
+  },
+  cardGreen: {
+    backgroundColor: '#50C878',
+  },
+  cardRed: {
+    backgroundColor: '#FF6B6B',
+  },
+  cardYellow: {
+    backgroundColor: '#FFD93D',
+  },
+  cardLabel: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: '600',
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  cardValue: {
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  transactionsContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    margin: 16,
+    padding: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1a1a2e',
+    marginBottom: 16,
+  },
+  transactionsList: {
+    gap: 12,
+  },
+  transactionItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  transactionInfo: {
+    flex: 1,
+  },
+  transactionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1a1a2e',
+    marginBottom: 4,
+  },
+  transactionCategory: {
+    fontSize: 14,
+    color: '#666',
+  },
+  transactionAmount: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1a1a2e',
+  },
+  positiveAmount: {
+    color: '#50C878',
   },
 });
+
+export default HomeScreen;
